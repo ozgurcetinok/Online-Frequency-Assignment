@@ -1,0 +1,30 @@
+//Uses the default LP solver.
+//If you have cplex you can uncomment the following line
+
+%arg -solver gurobi
+
+parameters:
+
+Arcset[,] := readcsv("neighbor.txt");
+N_calls := count(Arcset[1,]);
+K := 4; //number of colors
+callset := 1..N_calls;
+colorset := 1..K;
+
+
+
+
+variables:
+
+e[1..N_calls]: binary;
+c[1..N_calls, 1..K]: binary;
+
+objectives:
+
+cost: sum{m in callset: e[m]} ->min;
+
+
+constraints:
+
+constraint1 {m in callset: sum {k in colorset: c[m,k]} = 1 - e[m]; }
+constraint2 {m in callset, n in callset, k in colorset: Arcset[m,n]*c[m,k] + Arcset[m,n]*c[n,k] <= 1; }
